@@ -1,0 +1,6 @@
+[submodule "lib_utils"]
+	path = lib_utils
+	url = https://github.com/cln515/lib_utils
+[submodule "spline"]
+	path = spline
+	url = https://github.com/ttk592/spline.git
