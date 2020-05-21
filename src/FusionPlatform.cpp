@@ -2,6 +2,32 @@
 
 
 void FusionPlatform::scan(double ts, double te) {
+
+	for (int i = 0; i < cameras.size(); i++) {
+		double exposure = (1.0 / cameras.at(i)->fps);
+		int ts_cnt = ts / exposure;
+		for (double t = exposure * ts_cnt + 1; t < te; t += exposure) {
+			Vector4d q;
+			q(0) = sqx(t);
+			q(1) = sqy(t);
+			q(2) = sqz(t);
+			q(3) = sqw(t);
+			q.normalize();
+			Vector3d pos;
+			pos(0) = sx(t);
+			pos(1) = sy(t);
+			pos(2) = sz(t);
+			Matrix4d campara, cinv;
+			campara.block(0, 0, 3, 3) = q2dcm(q);
+			campara.block(0, 3, 3, 1) = pos;
+			campara.block(3, 0, 1, 4) << 0, 0, 0, 1;
+			cinv = campara.inverse();
+			cameras.at(i)->renderColor(cinv);//multiply campara
+			cameras.at(i)->imwrite();
+			cameras.at(i)->clearImage();
+		}
+	}
+
 	for (int i = 0; i < lidars.size(); i++) {
 		__int64 t_start = ts / (1.0 / lidars.at(i)->lidar->scanpersec) + 1,
 			t_end = te / (1.0 / lidars.at(i)->lidar->scanpersec) - 1;
@@ -35,30 +61,7 @@ void FusionPlatform::scan(double ts, double te) {
 	}
 
 
-	for (int i = 0; i < cameras.size(); i++) {
-		double exposure = (1.0 / cameras.at(i)->fps);
-		int ts_cnt = ts / exposure;
-		for (double t = exposure*ts_cnt+1;t<te;t+=exposure) {
-			Vector4d q;
-			q(0) = sqx(t);
-			q(1) = sqy(t);
-			q(2) = sqz(t);
-			q(3) = sqw(t);
-			q.normalize();
-			Vector3d pos;
-			pos(0) = sx(t);
-			pos(1) = sy(t);
-			pos(2) = sz(t);
-			Matrix4d campara,cinv;
-			campara.block(0, 0, 3, 3) = q2dcm(q);
-			campara.block(0, 3, 3, 1) = pos;
-			campara.block(3, 0, 1, 4) << 0, 0, 0, 1;
-			cinv = campara.inverse();
-			cameras.at(i)->render(cinv);//multiply campara
-			cameras.at(i)->imwrite();
-			cameras.at(i)->clearImage();
-		}
-	}
+
 
 }
 
