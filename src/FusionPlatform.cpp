@@ -13,6 +13,8 @@ void FusionPlatform::scan(double ts, double te) {
 			q(2) = sqz(t);
 			q(3) = sqw(t);
 			q.normalize();
+			std::cout << q.transpose() << std::endl;
+
 			Vector3d pos;
 			pos(0) = sx(t);
 			pos(1) = sy(t);
@@ -22,6 +24,7 @@ void FusionPlatform::scan(double ts, double te) {
 			campara.block(0, 3, 3, 1) = pos;
 			campara.block(3, 0, 1, 4) << 0, 0, 0, 1;
 			cinv = campara.inverse();
+			std::cout << campara << std::endl << std::endl;
 			cameras.at(i)->renderColor(cinv);//multiply campara
 			cameras.at(i)->imwrite();
 			cameras.at(i)->clearImage();
@@ -67,9 +70,11 @@ void FusionPlatform::scan(double ts, double te) {
 
 void FusionPlatform::setTime(std::vector<double> time, std::vector<Matrix4d> motion) {
 	std::vector<double> px, py, pz, pqx, pqy, pqz, pqw;
+	Vector4d qprev;
 	for (int i = 0; i < motion.size(); i++) {
 		Matrix3d r = motion.at(i).block(0,0,3,3);
 		Vector4d q = dcm2q(r);
+		if (i!=0 && q.dot(qprev) < 0)q = qprev;
 		Vector3d t = motion.at(i).block(0, 3, 3, 1);
 		px.push_back(t(0));
 		py.push_back(t(1));
@@ -78,6 +83,8 @@ void FusionPlatform::setTime(std::vector<double> time, std::vector<Matrix4d> mot
 		pqy.push_back(q(1));
 		pqz.push_back(q(2));
 		pqw.push_back(q(3));
+		std::cout << q.transpose() << std::endl;
+		qprev = q;
 	}
 	sx.set_points(time, px);
 	sy.set_points(time, py);
