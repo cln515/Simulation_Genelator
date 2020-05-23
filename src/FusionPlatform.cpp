@@ -6,6 +6,8 @@ void FusionPlatform::scan(double ts, double te) {
 	for (int i = 0; i < cameras.size(); i++) {
 		double exposure = (1.0 / cameras.at(i)->fps);
 		int ts_cnt = ts / exposure;
+		cameras.at(i)->createContext();
+		Matrix4d extParam = ext_camera.at(i).inverse();
 		for (double t = exposure * ts_cnt + 1; t < te; t += exposure) {
 			Vector4d q;
 			q(0) = sqx(t);
@@ -23,12 +25,13 @@ void FusionPlatform::scan(double ts, double te) {
 			campara.block(0, 0, 3, 3) = q2dcm(q);
 			campara.block(0, 3, 3, 1) = pos;
 			campara.block(3, 0, 1, 4) << 0, 0, 0, 1;
-			cinv = campara.inverse();
+			cinv = extParam * campara.inverse();
 			std::cout << campara << std::endl << std::endl;
 			cameras.at(i)->renderColor(cinv);//multiply campara
 			cameras.at(i)->imwrite();
 			cameras.at(i)->clearImage();
 		}
+		cameras.at(i)->discardContext();
 	}
 
 	for (int i = 0; i < lidars.size(); i++) {
@@ -36,6 +39,7 @@ void FusionPlatform::scan(double ts, double te) {
 			t_end = te / (1.0 / lidars.at(i)->lidar->scanpersec) - 1;
 		std::cout << ts << "," << te << "," << lidars.at(i)->lidar->scanpersec << std::endl;
 		std::vector<LRF::LRF_emulator::ScanPoint> scans_;
+		Matrix4d extParam = ext_Lidar.at(i).inverse();
 		std::cout << t_start << "," << t_end << std::endl;
 		for (int j = t_start; j < t_end; j++) {
 			double t = 1.0 * j / lidars.at(i)->lidar->scanpersec;
@@ -53,7 +57,7 @@ void FusionPlatform::scan(double ts, double te) {
 			campara.block(0, 0, 3, 3) = q2dcm(q);
 			campara.block(0, 3, 3, 1) = pos;
 			campara.block(3, 0, 1, 4) << 0, 0, 0, 1;
-			cinv = campara.inverse();
+			cinv = extParam * campara.inverse();
 
 			std::vector<LRF::LRF_emulator::ScanPoint> scans = lidars.at(i)->scan(t, campara);
 			scans_.insert(scans_.end(), scans.begin(), scans.end());
