@@ -20,6 +20,7 @@ std::vector<LRF_emulator::ScanPoint> LRF_emulator::scan(double t, Matrix4d campa
 			spt.y = localPoint(1);
 			spt.z = localPoint(2);
 			spt.intensity=(reflectance);
+			spt.ts = t;
 			scanpt.push_back(spt);
 
 		}
@@ -29,8 +30,8 @@ std::vector<LRF_emulator::ScanPoint> LRF_emulator::scan(double t, Matrix4d campa
 			spt.y = 0.0;
 			spt.z = 0.0;
 			spt.intensity = 0.0;
+			spt.ts = t;
 			scanpt.push_back(spt);
-		
 		}
 	}
 	return scanpt;

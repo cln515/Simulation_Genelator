@@ -62,7 +62,7 @@ namespace LRF {
 
 
 		struct ScanPoint {
-			float x, y, z, intensity;
+			float x, y, z, intensity, ts;
 		};
 
 		enum sensor_type {
@@ -105,6 +105,7 @@ namespace LRF {
 		};
 
 		std::vector<ScanPoint> scan(double t, Matrix4d campara);
+		std::string fileBase;
 
 	private:
 		IntersectionSearcher* isearch;;

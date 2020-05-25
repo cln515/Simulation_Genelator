@@ -63,6 +63,8 @@ void FusionPlatform::scan(double ts, double te) {
 			scans_.insert(scans_.end(), scans.begin(), scans.end());
 		}
 		ofstream ofs("pc.dat", std::ios::binary);
+		__int64 vnum = scans_.size();
+		ofs.write((char*)vnum,sizeof(__int64));
 		ofs.write((char*)scans_.data(), sizeof(LRF::LRF_emulator::ScanPoint)*scans_.size());
 		;
 	}
