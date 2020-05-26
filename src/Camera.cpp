@@ -1,6 +1,6 @@
 #include <Camera.h>
 
-void camera::imwrite() {
+std::string camera::imwrite() {
 	cv::Mat colorimage = cv::Mat(cv::Size(viewWidth_, viewHeight_), CV_8UC3);
 	memcpy(colorimage.data, getColorData(), sizeof(uchar) * 3 * colorimage.size().width*colorimage.size().height);
 	if (getType() == FISHEYE) {
@@ -13,4 +13,5 @@ void camera::imwrite() {
 	}
 	cv::imwrite(fileBase+std::to_string(count) +".jpg", colorimage);
 	count++;
+	return fileBase + std::to_string(count) + ".jpg";
 }

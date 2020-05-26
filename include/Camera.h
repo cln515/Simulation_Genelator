@@ -7,6 +7,6 @@ public:
 	std::string fileBase;
 	int count = 0;
 
-	void imwrite();
+	std::string imwrite();
 };
 
