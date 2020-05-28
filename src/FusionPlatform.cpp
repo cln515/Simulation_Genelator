@@ -55,7 +55,7 @@ void FusionPlatform::scan(double ts, double te) {
 
 		ofsmotion.write((char*)&frameNum,sizeof(int));
 		ofsmotion.write((char*)motion.data(), sizeof(_6dof)*motion.size());
-		ofsts.write((char*)&frameNum, sizeof(int));
+		//ofsts.write((char*)&frameNum, sizeof(int));
 		ofsts.write((char*)timestamp.data(), sizeof(double)*timestamp.size());
 	}
 
