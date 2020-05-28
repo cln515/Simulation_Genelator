@@ -9,6 +9,7 @@ public:
 	std::vector<Matrix4d> ext_Lidar;
 	std::vector<camera*> cameras;
 	std::vector<Matrix4d> ext_camera;
+	int frameCnt = 0;
 
 	void scan(double ts, double te);
 

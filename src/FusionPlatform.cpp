@@ -2,8 +2,9 @@
 
 
 void FusionPlatform::scan(double ts, double te) {
-
+	
 	for (int i = 0; i < cameras.size(); i++) {
+		frameCnt = 0;
 		double exposure = (1.0 / cameras.at(i)->fps);
 		int ts_cnt = ceil(ts / exposure);
 		cameras.at(i)->createContext();
@@ -57,6 +58,7 @@ void FusionPlatform::scan(double ts, double te) {
 		ofsmotion.write((char*)motion.data(), sizeof(_6dof)*motion.size());
 		//ofsts.write((char*)&frameNum, sizeof(int));
 		ofsts.write((char*)timestamp.data(), sizeof(double)*timestamp.size());
+		frameCnt = frameNum;
 	}
 
 	for (int i = 0; i < lidars.size(); i++) {
