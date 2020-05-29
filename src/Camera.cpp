@@ -11,7 +11,8 @@ std::string camera::imwrite() {
 		colorimage.copyTo(dst, mask);
 		colorimage = dst;
 	}
-	std::string jpgfile = fileBase + "_" + std::to_string(count) + ".jpg";
+	std::stringstream ss; ss << std::setfill('0') << std::right << std::setw(6) << count;
+	std::string jpgfile = fileBase + "_" + ss.str() + ".jpg";
 	cv::imwrite(jpgfile, colorimage);
 	count++;
 	return jpgfile;
