@@ -110,7 +110,7 @@ float IntersectionSearcher::query_ray(Vector3d origin,Vector3d direction,Vector3
 
 	}
 	else {
-		return 1.0;
+		return 0.8;
 	}
 
 	//std::list<Primitive_id> primitives;
