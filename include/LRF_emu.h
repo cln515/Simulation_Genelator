@@ -1,5 +1,6 @@
 #include "basicPly/BasicPly.h"
 #include "polygonSearch.h"
+#include <random>
 #pragma once
 
 namespace LRF {
@@ -76,12 +77,15 @@ namespace LRF {
 
 		LiDAR* lidar;
 
+		double scanNoise = 0;
+
 		LRF_emulator(sensor_type st) {
 			if (st == ZF_IMAGER) {
 				lidar = new PanoramaSensor();
 			}
 			else if(st == VLP_16){
 				lidar = new MultiBeam();
+				scanNoise = 0.02;
 			}
 		}
 

@@ -8,6 +8,10 @@ std::vector<LRF_emulator::ScanPoint> LRF_emulator::scan(double t, Matrix4d campa
 	std::vector<LRF_emulator::ScanPoint> scanpt;
 	lidar->getRayDirection(t,campara,laserOrigin,laserDirection);
 	//std::cout<< laserOrigin.size() <<std::endl;
+	std::random_device seed_gen;
+	std::default_random_engine engine(seed_gen());
+
+	std::normal_distribution<> dist(0.0, scanNoise);
 	for (int i = 0; i < laserOrigin.size(); i++) {
 		Vector3d retPoint;
 		double reflectance;
@@ -16,9 +20,13 @@ std::vector<LRF_emulator::ScanPoint> LRF_emulator::scan(double t, Matrix4d campa
 			retPoint4d << retPoint(0), retPoint(1), retPoint(2), 1;
 			Vector4d localPoint = campara.inverse() * retPoint4d;
 			LRF_emulator::ScanPoint spt;
-			spt.x = localPoint(0);
-			spt.y = localPoint(1);
-			spt.z = localPoint(2);
+			//noise
+
+			double noise = dist(engine);
+			Vector3d noised = noise * localPoint.segment(0, 3).normalized();
+			spt.x = localPoint(0) + noised (0);
+			spt.y = localPoint(1) + noised(1);
+			spt.z = localPoint(2) + noised(2);
 			spt.intensity=(reflectance);
 			spt.ts = t;
 			scanpt.push_back(spt);
