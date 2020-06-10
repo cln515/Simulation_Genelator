@@ -45,15 +45,17 @@ float IntersectionSearcher::query_ray(Vector3d origin,Vector3d direction,Vector3
 	Point vtx1, vtx2, vtx3;
 	while(it != intersections.end()){
 		Point* p=boost::get<Point>(&(*it)->first);
-		double d=CGAL::squared_distance(o,(*p));
-		if(d<min){
-			min=d;
-			out(0)=(*p).x();
-			out(1)=(*p).y();
-			out(2)=(*p).z();
-			vtx1 = (*it)->second->vertex(0);
-			vtx2 = (*it)->second->vertex(1);
-			vtx3 = (*it)->second->vertex(2);			
+		if (p != NULL) {
+			double d = CGAL::squared_distance(o, (*p));
+			if (d < min) {
+				min = d;
+				out(0) = (*p).x();
+				out(1) = (*p).y();
+				out(2) = (*p).z();
+				vtx1 = (*it)->second->vertex(0);
+				vtx2 = (*it)->second->vertex(1);
+				vtx3 = (*it)->second->vertex(2);
+			}
 		}
 		++it;
 	}
