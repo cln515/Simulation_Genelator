@@ -13,6 +13,7 @@ std::string camera::imwrite() {
 	}
 	std::stringstream ss; ss << std::setfill('0') << std::right << std::setw(6) << count;
 	std::string jpgfile = fileBase + "_" + ss.str() + ".jpg";
+	cv::cvtColor(colorimage, colorimage, CV_RGB2BGR);
 	cv::imwrite(jpgfile, colorimage);
 	count++;
 	return jpgfile;
