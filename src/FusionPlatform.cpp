@@ -54,7 +54,8 @@ void FusionPlatform::scan(double ts, double te) {
 			ofslist << fileNameList.at(j)<<std::endl;
 		}
 
-		ofsmotion.write((char*)&frameNum,sizeof(int));
+		__int64 frameNum64 = frameNum;
+		ofsmotion.write((char*)&frameNum64,sizeof(__int64));
 		ofsmotion.write((char*)motion.data(), sizeof(_6dof)*motion.size());
 		//ofsts.write((char*)&frameNum, sizeof(int));
 		ofsts.write((char*)timestamp.data(), sizeof(double)*timestamp.size());
