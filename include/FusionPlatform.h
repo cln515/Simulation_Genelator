@@ -1,7 +1,6 @@
 #include <LRF_emu.h>
-#include <Camera.h>
 #include <spline.h>
-
+#include <Camera.h>
 
 class FusionPlatform {
 public:

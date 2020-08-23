@@ -5,9 +5,9 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
-#include <ANN/ANN.h>
-#include "Eigen\Eigen"
-#include "Eigen\Core"
+#include <ann/ANN.h>
+#include "Eigen/Eigen"
+#include "Eigen/Core"
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::FT FT;
 typedef K::Ray_3 Ray;

@@ -1,7 +1,6 @@
 #pragma once
-#include "PanoramaRenderer/PanoramaRenderer.h"
 #include "utility/utility.h"
-
+#include "PanoramaRenderer/PanoramaRenderer.h"
 
 struct LadybugData {
 	double f;

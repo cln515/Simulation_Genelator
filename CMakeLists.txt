@@ -3,6 +3,7 @@ add_definitions("-Wall -std=c++11")
 project(Simulation_Generator)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+set(CMAKE_CXX_FLAGS "-fpermissive -std=c++0x")
 
 include_directories(
 	lib_utils
@@ -38,10 +39,8 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBRARIES})
 
 
-set(ANN_DIR "" CACHE PATH "")
-set(ANN_LIB "" CACHE FILEPATH "")
-include_directories(${ANN_DIR})
-target_link_libraries(${PROJECT_NAME} ${ANN_LIB})
+find_package(ann REQUIRED)
+target_link_libraries(${PROJECT_NAME} ann)
 
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
@@ -50,8 +49,13 @@ target_link_libraries(${PROJECT_NAME}  ${OPENGL_LIBRARIES})
 find_package(GLEW REQUIRED)
 if (GLEW_FOUND)
     include_directories(${GLEW_INCLUDE_DIRS})
-    link_libraries(${GLEW_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${GLEW_LIBRARIES})
 endif()
+
+if(UNIX)
+find_package(X11 REQUIRED)
+target_link_libraries(${PROJECT_NAME}  ${X11_LIBRARIES})
+endif(UNIX)
 
 
 #find_package(PCL REQUIRED)

@@ -12,7 +12,7 @@ void FusionPlatform::scan(double ts, double te) {
 		std::vector<std::string> fileNameList;
 		std::vector<_6dof> motion;
 		std::vector<double> timestamp;
-		std::cout << ts << "," << te << "," << ts_cnt << "," << exposure << std::endl;
+		std::cout <<"camera "<< i <<":" << ts << "," << te << "," << ts_cnt << "," << exposure << std::endl;
 		for (double t = exposure * ts_cnt; t <= te; t += exposure) {
 			Vector4d q;
 			q(0) = sqx(t);
@@ -33,11 +33,15 @@ void FusionPlatform::scan(double ts, double te) {
 			cinv =(campara* extParam).inverse();
 			std::cout << campara << std::endl << std::endl;
 			cameras.at(i)->renderColor(cinv);//multiply campara
+			std::cout << "cam_render" << std::endl << std::endl;
 			std::string filepath = cameras.at(i)->imwrite(),fname;
+#if defined(WIN32) || defined(WIN64)
 			fname = filepath.substr(filepath.find_last_of("\\") + 1);
+			#elif defined(__unix__)
+			fname = filepath.substr(filepath.find_last_of("/") + 1);
+			#endif
 			fileNameList.push_back(fname);
 			cameras.at(i)->clearImage();
-
 			cpara = cinv.inverse();
 			_6dof mot_dof = m2_6dof(cpara);
 			motion.push_back(mot_dof);
@@ -53,9 +57,14 @@ void FusionPlatform::scan(double ts, double te) {
 		for (int j = 0; j < fileNameList.size(); j++) {
 			ofslist << fileNameList.at(j)<<std::endl;
 		}
+		#if defined(WIN32) || defined(WIN64)
+			__int64 frameNum64 = frameNum;
+					ofsmotion.write((char*)&frameNum64,sizeof(__int64));
+		#elif defined(__unix__)
+			int64_t frameNum64 = frameNum;
+					ofsmotion.write((char*)&frameNum64,sizeof(int64_t));
+		#endif
 
-		__int64 frameNum64 = frameNum;
-		ofsmotion.write((char*)&frameNum64,sizeof(__int64));
 		ofsmotion.write((char*)motion.data(), sizeof(_6dof)*motion.size());
 		//ofsts.write((char*)&frameNum, sizeof(int));
 		ofsts.write((char*)timestamp.data(), sizeof(double)*timestamp.size());
@@ -63,7 +72,11 @@ void FusionPlatform::scan(double ts, double te) {
 	}
 
 	for (int i = 0; i < lidars.size(); i++) {
+		#if defined(WIN32) || defined(WIN64)
 		__int64 t_start = ceil( ts / (1.0 / lidars.at(i)->lidar->scanpersec)),
+		#elif defined(__unix__)
+		int64_t t_start = ceil( ts / (1.0 / lidars.at(i)->lidar->scanpersec)),
+		#endif
 			t_end =floor( te / (1.0 / lidars.at(i)->lidar->scanpersec));
 		std::cout << ts << "," << te << "," << lidars.at(i)->lidar->scanpersec << std::endl;
 		std::vector<LRF::LRF_emulator::ScanPoint> scans_;
@@ -103,8 +116,15 @@ void FusionPlatform::scan(double ts, double te) {
 			}
 		}
 		ofstream ofs(lidars.at(i)->fileBase + ".dat", std::ios::binary);
+		#if defined(WIN32) || defined(WIN64)
 		__int64 vnum = scans_.size();
-		ofs.write((char*)&vnum,sizeof(__int64));
+				ofs.write((char*)&vnum,sizeof(__int64));
+		#elif defined(__unix__)
+			int64_t vnum = scans_.size();
+							ofs.write((char*)&vnum,sizeof(int64_t));
+		#endif		
+
+
 		ofs.write((char*)scans_.data(), sizeof(LRF::LRF_emulator::ScanPoint)*scans_.size());
 		;
 		BasicPly bp;

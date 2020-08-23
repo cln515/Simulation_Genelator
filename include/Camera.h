@@ -1,5 +1,6 @@
-#include "PanoramaRenderer\PanoramaRenderer.h"
 #include "opencv2/opencv.hpp"
+#include "PanoramaRenderer/PanoramaRenderer.h"
+
 
 class camera:public PanoramaRenderer{
 public:
