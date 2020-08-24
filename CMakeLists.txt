@@ -3,7 +3,10 @@ add_definitions("-Wall -std=c++11")
 project(Simulation_Generator)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
+if(UNIX)
 set(CMAKE_CXX_FLAGS "-fpermissive -std=c++0x")
+endif(UNIX)
 
 include_directories(
 	lib_utils
