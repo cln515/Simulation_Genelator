@@ -33,7 +33,6 @@ void FusionPlatform::scan(double ts, double te) {
 			cinv =(campara* extParam).inverse();
 			std::cout << campara << std::endl << std::endl;
 			cameras.at(i)->renderColor(cinv);//multiply campara
-			std::cout << "cam_render" << std::endl << std::endl;
 			std::string filepath = cameras.at(i)->imwrite(),fname;
 #if defined(WIN32) || defined(WIN64)
 			fname = filepath.substr(filepath.find_last_of("\\") + 1);
@@ -50,6 +49,7 @@ void FusionPlatform::scan(double ts, double te) {
 		cameras.at(i)->discardContext();
 		//output filename list, motion, timestamp
 		ofstream ofslist(cameras.at(i)->fileBase + ".lst");
+		ofstream ofsmotion_ascii(cameras.at(i)->fileBase + ".txt");
 		ofstream ofsmotion(cameras.at(i)->fileBase + "_l.dat",std::ios::binary);
 		ofstream ofsts(cameras.at(i)->fileBase + "_ts.dat", std::ios::binary);
 		int frameNum = fileNameList.size();
@@ -59,13 +59,18 @@ void FusionPlatform::scan(double ts, double te) {
 		}
 		#if defined(WIN32) || defined(WIN64)
 			__int64 frameNum64 = frameNum;
-					ofsmotion.write((char*)&frameNum64,sizeof(__int64));
+			ofsmotion.write((char*)&frameNum64,sizeof(__int64));
 		#elif defined(__unix__)
 			int64_t frameNum64 = frameNum;
 					ofsmotion.write((char*)&frameNum64,sizeof(int64_t));
 		#endif
 
-		ofsmotion.write((char*)motion.data(), sizeof(_6dof)*motion.size());
+//		ofsmotion.write((char*)motion.data(), sizeof(_6dof)*motion.size());
+		for (int j = 0; j < motion.size(); j++) {
+			ofsmotion.write((char*)&(timestamp.at(j)), sizeof(double));
+			ofsmotion.write((char*)&(motion.at(j)), sizeof(_6dof));
+			ofsmotion_ascii << timestamp.at(j) << "," << motion.at(j) << std::endl;
+		}
 		//ofsts.write((char*)&frameNum, sizeof(int));
 		ofsts.write((char*)timestamp.data(), sizeof(double)*timestamp.size());
 		frameCnt = frameNum;
