@@ -10,13 +10,15 @@ COPY cmake /home/repo/simulation-gen/cmake
 COPY CMakeLists.txt /home/repo/simulation-gen/CMakeLists.txt
 
 ENV DEBIAN_FRONTEND=noninteractive
-
+# install dependencies and tools
+# install Eigen3
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential wget git cmake nano unzip libeigen3-dev libgtk-3-dev qt5-default freeglut3-dev libvtk6-qt-dev libtbb-dev \
     libjpeg-dev libpng++-dev libtiff-dev libopenexr-dev libwebp-dev \
     libhdf5-dev libopenblas-dev liblapacke-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# install OpenCV
 WORKDIR /
 ENV OPENCV_VERSION="3.4.7"
 RUN wget --no-check-certificate https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip \
@@ -28,22 +30,20 @@ RUN wget --no-check-certificate https://github.com/opencv/opencv/archive/${OPENC
   -DBUILD_PERF_TESTS=OFF \
   -DCMAKE_BUILD_TYPE=RELEASE \
   -DENABLE_PRECOMPILED_HEADERS=OFF \
-# -DCMAKE_INSTALL_PREFIX=$(python3.7 -c "import sys; print(sys.prefix)") \
-#  -DPYTHON_EXECUTABLE=$(which python3.7) \
-#  -DPYTHON_INCLUDE_DIR=$(python3.7 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
-#  -DPYTHON_PACKAGES_PATH=$(python3.7 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
   .. \
 && make install
 
+# install cgal
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libssl-dev libcgal-dev ca-certificates libglew-dev\
+    libssl-dev libcgal-dev ca-certificates\
     && rm -rf /var/lib/apt/lists/*
 
+# install ANN
 RUN cd /home/repo && git clone https://github.com/cln515/ann 
-
 RUN mkdir -p /home/repo/ann/build && cd /home/repo/ann/build \
     && cmake .. && make -j4 && make install
 
+# install json
 RUN cd /home/repo && git clone https://github.com/nlohmann/json 
 RUN mkdir -p /home/repo/json/build && cd /home/repo/json/build \
     && cmake .. && make -j4 && make install
