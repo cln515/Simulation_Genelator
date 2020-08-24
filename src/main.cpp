@@ -181,7 +181,9 @@ int main(int argc, char *argv[])
 
 
 	ofstream ofsjson(outputFolder+"/process.json");
-	outj >> ofsjson;
+	ofsjson << std::setw(4) << outj << std::endl;
+	ofsjson.close();
+
 	ofsjson.close();
 
 
