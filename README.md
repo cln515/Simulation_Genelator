@@ -1,7 +1,7 @@
 # Simulation Data Renderer
 Simulation for multi-sensor (LiDAR and camera) system
 ## Dependency
-Eigen3, CGAL, json, OpenCV, ANN, Boost
+Eigen3, CGAL, json, OpenCV, ANN
 
 ## installation
 After dependency installation,
